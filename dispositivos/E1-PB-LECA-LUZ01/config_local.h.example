@@ -1,0 +1,53 @@
+// Copiar este archivo como config_local.h (en la misma carpeta) y completar.
+// config_local.h está en el .gitignore: NUNCA se commitea. Si contiene una clave,
+// un AppKey o una MAC de producción y llega a GitHub, este repo es público.
+
+#pragma once
+
+// Mesh ESP-WIFI-MESH (interior): los datos los da la cátedra. El dispositivo es
+// una HOJA: no lleva la clave del WiFi del edificio, solo la de la mesh.
+#define MESH_ID     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+#define MESH_CLAVE  "CAMBIAR"
+#define MESH_CANAL  0   // canal del WiFi del edificio; 0 = buscar en todos
+
+// MAC de esta placa (herramientas/leer_mac). Es también su identidad en AURA:
+// hw_id "mac-" + esta MAC en minúsculas.
+#define MAC_ESPERADA {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+
+// ===== Pines de este dispositivo (placa ESP32-S3 dev kit, WROOM-1) =====
+
+// Radar LD2420 de presencia por UART1 (datasheet oficial, J2 de 5 pines):
+//   3V3 | GND | OT1=UART_TX | RX=UART_RX | OT2=IO de presencia
+// NO hay pin "TX" en la plaquita: el TX es OT1 (en firmware <= 1.5.2 están
+// invertidos: TX en OT2). Alimentar con 3V3 (3.0..3.6 V, ~50 mA), NUNCA 5 V.
+//   módulo OT1 (su TX) -> LD2420_RX (GPIO18)
+//   módulo RX          <- LD2420_TX (GPIO17)
+#define LD2420_RX 18
+#define LD2420_TX 17
+
+// Baudios: 115200 (oficial, firmware >= 1.5.3); 256000 solo en firmware
+// <= 1.5.2. Si el monitor muestra "error 4" (timeout) y el cableado está bien,
+// descomentar la línea de abajo.
+// #define LD2420_BAUD 256000
+
+// LED de presencia: prende cuando el radar mide a alguien dentro de la
+// ventana (60..140 cm, sale en 40..160). Cablear pin -> resistencia
+// (220..330 ohm) -> LED -> GND. No usar 0/3/45/46 (strapping), 19/20 (USB),
+// 17/18 (radar), 8/9 (I2C), 15/16 (relé).
+#define LED_PRESENCIA_PIN 14
+// #define LED_PRESENCIA_INVERTIDO true   // si el LED prende con LOW
+
+// ETAPA 2 — BH1750 de lux por I2C: ventana en 0x23 (ADDR a GND), aula en 0x5C
+// (ADDR a VCC). Primero se descomenta todo lo "ETAPA 2" del .ino, se cablea y
+// recién acá se descomienzan estas líneas. 8/9 son los pines de Wire en ESP32-S3.
+// #define HAY_BH1750
+// #define I2C_SDA 8
+// #define I2C_SCL 9
+
+// ETAPA 2 — Relé doble canal: 1 = luz del aula, 2 = reservado. Mismo paso:
+// descomentar el código "ETAPA 2" del .ino, cablear y definir los pines acá.
+// Ojo: no usar 8/9 (I2C) ni 17/18 (LD2420). Los relevos de módulo suelen ser
+// de lógica inversa: si el tuyo enciende con LOW, dejalo en true.
+// #define RELE_PIN_1  15
+// #define RELE_PIN_2  16
+// #define RELE_ACTIVO_BAJO true

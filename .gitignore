@@ -1,0 +1,36 @@
+# ------------------ Configuración local ------------------
+# Nunca se commitea (los datos de la mesh los da la cátedra)
+config_local.h
+
+# ------------------ Python -------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# ------------------ Binarios de tests (C++) --------------
+test_protocolo
+test_buffer
+test_ingest_id
+test_cola
+test_nodo_logica
+test_regla
+*.o
+*.out
+
+# ------------------ Arduino / compilación ----------------
+build/
+*.bin
+*.elf
+*.hex
+*.map
+
+# ------------------ Editores / sistema -------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
